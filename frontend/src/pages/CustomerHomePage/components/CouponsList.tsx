@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import CouponCard from "./CouponCard";
+import CouponCard from "../../../components/CouponCard";
 import CouponModal from "./CouponModal";
 import RedeemModal from "./RedeemModal";
 import SelectLocation from "@/components/SelectLocation";
