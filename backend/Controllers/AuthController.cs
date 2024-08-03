@@ -1,4 +1,3 @@
-
 using backend.Models;
 using backend.DTOs;
 using Microsoft.AspNetCore.Identity;
@@ -41,7 +40,7 @@ namespace backend.Controllers
                 {
                     Name = user.Name,
                     Email = user.Email,
-                    Token = _tokenService.CreateToken(user)
+                    Token = await _tokenService.CreateTokenAsync(user)
                 }
             );
         }
@@ -75,7 +74,7 @@ namespace backend.Controllers
                         {
                             Name = appUser.Name,
                             Email = appUser.Email,
-                            Token = _tokenService.CreateToken(appUser)
+                            Token = await _tokenService.CreateTokenAsync(appUser)
                         }
                     );
                 }
@@ -89,6 +88,5 @@ namespace backend.Controllers
                 return StatusCode(500, createdUser.Errors);
             }
         }
-
     }
 }
