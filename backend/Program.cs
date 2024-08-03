@@ -17,8 +17,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .WriteTo.File("Logs/app.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
-
-builder.Host.UseSerilog(); // Use Serilog for logging
+builder.Host.UseSerilog();
 
 // Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -66,10 +65,22 @@ builder.Services.AddAuthentication(options =>
 
 // Add application services
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<RoleInitializer>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add authorization services
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CompanyOnly", policy =>
+        policy.RequireRole("Company"));
+});
+
+// Add controllers with NewtonsoftJson
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 
 // Configure Swagger
 builder.Services.AddEndpointsApiExplorer();

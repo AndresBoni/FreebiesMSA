@@ -22,18 +22,26 @@ namespace backend.Models
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Campaigns)
                 .WithOne(c => c.User)
-                .HasForeignKey(c => c.UserId);
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.Redemptions)
                 .WithOne(r => r.User)
                 .HasForeignKey(r => r.UserId);
+                
 
             modelBuilder.Entity<Campaign>()
                 .HasOne(c => c.Coupon)
                 .WithOne(co => co.Campaign)
-                .HasForeignKey<Campaign>(c => c.CouponId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey<Coupon>(c => c.CampaignId) 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Coupon>()
+                .HasOne(c => c.Campaign)
+                .WithOne(co => co.Coupon)
+                .HasForeignKey<Campaign>(c => c.CouponId) 
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Coupon>()
                 .HasMany(c => c.Redemptions)
