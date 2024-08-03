@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDB : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +31,7 @@ namespace backend.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -184,11 +184,15 @@ namespace backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CouponId = table.Column<int>(type: "int", nullable: false),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    District = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AvailableDays = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AvailableHours = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    IsAllDay = table.Column<bool>(type: "bit", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TargetCustomer = table.Column<int>(type: "int", nullable: false),
+                    TargetCustomer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotalCoupons = table.Column<int>(type: "int", nullable: false),
                     RedeemedCoupons = table.Column<int>(type: "int", nullable: false),
                     InProgressCoupons = table.Column<int>(type: "int", nullable: false)
@@ -207,7 +211,7 @@ namespace backend.Migrations
                         column: x => x.CouponId,
                         principalTable: "Coupons",
                         principalColumn: "CouponId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,6 +223,8 @@ namespace backend.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CouponId = table.Column<int>(type: "int", nullable: false),
                     RedemptionCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RedeemedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Validated = table.Column<bool>(type: "bit", nullable: false)
                 },

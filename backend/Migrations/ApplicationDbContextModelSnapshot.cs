@@ -239,18 +239,24 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AvailableHours")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("CouponId")
                         .HasColumnType("int");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<TimeSpan?>("EndTime")
+                        .HasColumnType("time");
+
                     b.Property<int>("InProgressCoupons")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsAllDay")
+                        .HasColumnType("bit");
 
                     b.Property<int>("RedeemedCoupons")
                         .HasColumnType("int");
@@ -258,8 +264,16 @@ namespace backend.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TargetCustomer")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TargetCustomer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TotalCoupons")
                         .HasColumnType("int");
@@ -324,6 +338,12 @@ namespace backend.Migrations
 
                     b.Property<int>("CouponId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("RedeemedAt")
                         .HasColumnType("datetime2");
@@ -404,7 +424,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.Coupon", "Coupon")
                         .WithOne("Campaign")
                         .HasForeignKey("backend.Models.Campaign", "CouponId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("backend.Models.ApplicationUser", "User")
