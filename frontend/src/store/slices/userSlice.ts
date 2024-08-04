@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface User {
+  id: string;
   name: string;
   email: string;
   role?: string;
@@ -13,7 +14,7 @@ export interface UserState {
 
 const initialState: UserState = {
   token: localStorage.getItem("token") || null,
-  user: null,
+  user: JSON.parse(localStorage.getItem("user") || "null"),
 };
 
 const userSlice = createSlice({
@@ -22,6 +23,7 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload));
     },
     setToken: (state, action: PayloadAction<string | null>) => {
       state.token = action.payload;
@@ -35,6 +37,7 @@ const userSlice = createSlice({
       state.token = null;
       state.user = null;
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
   },
 });
