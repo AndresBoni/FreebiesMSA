@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -12,8 +12,9 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import api from "@/config/axiosConfig";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setToken, setUser } from "@/store/slices/userSlice";
+import { RootState } from "@/store/store";
 
 const loginUser = async (email: string, password: string) => {
   try {
@@ -51,6 +52,13 @@ const Login: React.FC = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const token = useSelector((state: RootState) => state.user.token);
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -59,11 +67,12 @@ const Login: React.FC = () => {
     setFormError(null);
 
     try {
-      const { token, role, name } = await loginUser(email, password);
+      const { token, id, role, name } = await loginUser(email, password);
 
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify({ id, name, email, role }));
       dispatch(setToken(token));
-      dispatch(setUser({ name, email, role }));
+      dispatch(setUser({ id, name, email, role }));
 
       navigate(role === "Company" ? "/company" : "/");
     } catch (error) {

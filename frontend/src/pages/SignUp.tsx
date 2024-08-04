@@ -118,7 +118,7 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const { token, role } = await registerUser(
+      const { token, id, role } = await registerUser(
         name,
         email,
         password,
@@ -127,8 +127,9 @@ const SignUp: React.FC = () => {
       );
 
       localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify({ id, name, email, role }));
       dispatch(setToken(token));
-      dispatch(setUser({ name, email, role }));
+      dispatch(setUser({ id, name, email, role }));
 
       navigate(role === "Company" ? "/company" : "/");
     } catch (error) {
