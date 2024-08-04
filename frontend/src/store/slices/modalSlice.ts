@@ -4,11 +4,13 @@ import { Coupon } from "@/types";
 export interface ModalState {
   couponModal: { isOpen: boolean; coupon?: Coupon };
   redeemModal: { isOpen: boolean; coupon?: Coupon };
+  addNewCouponModal: { isOpen: boolean };
 }
 
 const initialState: ModalState = {
   couponModal: { isOpen: false },
   redeemModal: { isOpen: false },
+  addNewCouponModal: { isOpen: false },
 };
 
 const modalSlice = createSlice({
@@ -32,6 +34,12 @@ const modalSlice = createSlice({
       state.redeemModal.isOpen = false;
       state.redeemModal.coupon = undefined;
     },
+    openAddNewCouponModal: (state) => {
+      state.addNewCouponModal.isOpen = true;
+    },
+    closeAddNewCouponModal: (state) => {
+      state.addNewCouponModal.isOpen = false;
+    },
   },
 });
 
@@ -40,5 +48,7 @@ export const {
   closeCouponModal,
   openRedeemModal,
   closeRedeemModal,
+  openAddNewCouponModal,
+  closeAddNewCouponModal,
 } = modalSlice.actions;
 export default modalSlice.reducer;

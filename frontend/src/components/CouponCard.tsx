@@ -1,49 +1,71 @@
-import React from "react";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import IconButton from "@mui/material/IconButton";
+import React, { useState, useCallback } from "react";
+import {
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
+  IconButton,
+  Typography,
+  Collapse,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Typography from "@mui/material/Typography";
-import Collapse from "@mui/material/Collapse";
 import GiftIcon from "@mui/icons-material/CardGiftcardOutlined";
 import { Coupon } from "@/types";
 import noCouponImage from "@/assets/nocouponimage.svg";
+
 interface Props {
   coupon: Coupon;
-  onOpenCouponModal: (coupon: Coupon) => void;
-  onOpenRedeemModal: (coupon: Coupon) => void;
+  onOpenCouponModal?: (coupon: Coupon) => void;
+  onOpenRedeemModal?: (coupon: Coupon) => void;
 }
+
+const formatLocation = (state: string, district: string) => {
+  if (state && district) {
+    return `${state}, ${district}`;
+  }
+  return state || district;
+};
 
 const CouponCard: React.FC<Props> = ({
   coupon,
   onOpenCouponModal,
   onOpenRedeemModal,
 }) => {
-  const [couponImage, setCouponImage] = React.useState(
+  const [couponImage, setCouponImage] = useState(
     coupon.imageUrl || noCouponImage,
   );
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
 
-  const handleExpandClick = () => {
+  const handleExpandClick = useCallback(() => {
     setExpanded((prevExpanded) => !prevExpanded);
-  };
+  }, []);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     setCouponImage(noCouponImage);
-  };
+  }, []);
+
+  const handleOpenCouponModal = useCallback(() => {
+    if (onOpenCouponModal) {
+      onOpenCouponModal(coupon);
+    }
+  }, [coupon, onOpenCouponModal]);
+
+  const handleOpenRedeemModal = useCallback(() => {
+    if (onOpenRedeemModal) {
+      onOpenRedeemModal(coupon);
+    }
+  }, [coupon, onOpenRedeemModal]);
 
   return (
-    <Card sx={{ width: "100%", cursor: "pointer" }}>
+    <Card sx={{ width: "100%", minHeight: 390, cursor: "pointer" }}>
       <CardHeader
-        onClick={() => onOpenCouponModal(coupon)}
+        onClick={handleOpenCouponModal}
         titleTypographyProps={{ variant: "h6", fontWeight: "bold" }}
         title={coupon.title}
         subheader={
           <Typography variant="body2">
-            {`${coupon.location.state}, ${coupon.location.district}`}
+            {formatLocation(coupon.location.state, coupon.location.district)}
           </Typography>
         }
       />
@@ -53,13 +75,10 @@ const CouponCard: React.FC<Props> = ({
         image={couponImage}
         onError={handleImageError}
         alt={coupon.title}
-        onClick={() => onOpenCouponModal(coupon)}
-        style={{ cursor: "pointer" }}
+        onClick={handleOpenCouponModal}
+        sx={{ cursor: "pointer" }}
       />
-      <CardContent
-        onClick={() => onOpenCouponModal(coupon)}
-        style={{ cursor: "pointer" }}
-      >
+      <CardContent onClick={handleOpenCouponModal} sx={{ cursor: "pointer" }}>
         <Typography variant="body2" color="text.secondary">
           {coupon.shortDescription}
         </Typography>
@@ -67,7 +86,7 @@ const CouponCard: React.FC<Props> = ({
       <CardActions disableSpacing>
         <IconButton
           aria-label="redeem"
-          onClick={() => onOpenRedeemModal(coupon)}
+          onClick={handleOpenRedeemModal}
           sx={{ p: 1 }}
           color="primary"
         >
