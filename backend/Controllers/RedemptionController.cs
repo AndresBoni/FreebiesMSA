@@ -98,6 +98,7 @@ namespace backend.Controllers
 
                 if (redemption.ExpirationDate < DateTime.UtcNow)
                 {
+                    await _redemptionRepository.DeleteRedemptionAsync(redemption.RedemptionId);
                     _logger.LogWarning("Redemption code has already expired.");
                     return BadRequest("Redemption code has already expired.");
                 }

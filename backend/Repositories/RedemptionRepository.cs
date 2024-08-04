@@ -93,6 +93,45 @@ namespace backend.Repositories
             }
         }
 
+        public async Task<bool> DeleteRedemptionAsync(int redemptionId)
+        {
+            try
+            {
+                var now = DateTime.UtcNow;
+                var redemption = await _context.Redemptions
+                    .FirstOrDefaultAsync(r => r.RedemptionId == redemptionId);
+
+                if (redemption == null)
+                {
+                    _logger.LogWarning("Redemption not found: {RedemptionId}", redemptionId);
+                    return false;
+                }
+
+                if (redemption.ExpirationDate < now && !redemption.Validated)
+                {
+                    var campaign = await _context.Campaigns.FindAsync(redemption.CampaignId);
+                    if (campaign != null)
+                    {
+                        campaign.TotalCoupons += 1;
+                        campaign.InProgressCoupons -= 1;
+                    }
+
+                    _context.Redemptions.Remove(redemption);
+
+                    await _context.SaveChangesAsync();
+
+                    return true; 
+                }
+                
+                return false; 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting redemption.");
+                throw new Exception("Error deleting redemption", ex);
+            }
+        }
+
         public async Task CleanUpExpiredRedemptionsAsync()
         {
             try
@@ -104,6 +143,24 @@ namespace backend.Repositories
 
                 if (expiredRedemptions.Any())
                 {
+                    var campaignUpdates = expiredRedemptions
+                        .GroupBy(r => r.CampaignId)
+                        .Select(group => new
+                        {
+                            CampaignId = group.Key,
+                            Count = group.Count()
+                        })
+                        .ToList();
+
+                    foreach (var update in campaignUpdates)
+                    {
+                        var campaign = await _context.Campaigns.FindAsync(update.CampaignId);
+                        if (campaign != null)
+                        {
+                            campaign.TotalCoupons += update.Count;
+                            campaign.InProgressCoupons -= update.Count;
+                        }
+                    }
                     _context.Redemptions.RemoveRange(expiredRedemptions);
                     await _context.SaveChangesAsync();
                 }

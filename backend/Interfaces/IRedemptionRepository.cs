@@ -8,6 +8,7 @@ namespace backend.Interfaces
         Task<Redemption> CreateRedemptionAsync(Redemption redemption);
         Task<Redemption?> GetRedemptionByCodeAsync(string redemptionCode);
         Task<bool> UpdateRedemptionAsync(Redemption redemption);
+        Task<bool> DeleteRedemptionAsync(int redemption);
         Task CleanUpExpiredRedemptionsAsync();
     }
 }
