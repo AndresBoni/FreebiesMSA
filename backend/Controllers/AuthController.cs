@@ -29,18 +29,22 @@ namespace backend.Controllers
 
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-            if (user == null) return Unauthorized("Invalid email!");
+            if (user == null) return Unauthorized("Invalid user");
 
             var result = await _signinManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
             if (!result.Succeeded) return Unauthorized("Invalid email and/or password");
+            
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
 
             return Ok(
                 new NewUserDto
                 {
                     Name = user.Name,
                     Email = user.Email,
-                    Token = await _tokenService.CreateTokenAsync(user)
+                    Token = await _tokenService.CreateTokenAsync(user),
+                    Role = role
                 }
             );
         }
@@ -69,12 +73,16 @@ namespace backend.Controllers
 
                 if (roleResult.Succeeded)
                 {
+                    var roles = await _userManager.GetRolesAsync(appUser);
+                    var userRole = roles.FirstOrDefault();
+
                     return Ok(
                         new NewUserDto
                         {
                             Name = appUser.Name,
                             Email = appUser.Email,
-                            Token = await _tokenService.CreateTokenAsync(appUser)
+                            Token = await _tokenService.CreateTokenAsync(appUser),
+                            Role = userRole
                         }
                     );
                 }
