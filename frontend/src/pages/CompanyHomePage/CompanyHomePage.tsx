@@ -1,6 +1,6 @@
 import React from "react";
 import QRScanner from "./components/QRScanner";
-import MyCoupons from "./components/MyCoupons";
+import MyCampaigns from "./components/MyCampaigns";
 import { Container } from "@mui/material";
 
 const CompanyHomePage: React.FC = () => {
@@ -18,7 +18,7 @@ const CompanyHomePage: React.FC = () => {
       }}
     >
       <QRScanner />
-      <MyCoupons />
+      <MyCampaigns />
     </Container>
   );
 };
