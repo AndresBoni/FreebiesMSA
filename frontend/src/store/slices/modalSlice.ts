@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Coupon } from "@/types";
+import { Campaign } from "@/types";
 
 export interface ModalState {
-  couponModal: { isOpen: boolean; coupon?: Coupon };
-  redeemModal: { isOpen: boolean; coupon?: Coupon };
+  couponModal: { isOpen: boolean; campaign?: Campaign };
+  redeemModal: { isOpen: boolean; campaign?: Campaign };
   addNewCouponModal: { isOpen: boolean };
 }
 
@@ -17,22 +17,22 @@ const modalSlice = createSlice({
   name: "modals",
   initialState,
   reducers: {
-    openCouponModal: (state, action: PayloadAction<Coupon>) => {
+    openCouponModal: (state, action: PayloadAction<Campaign>) => {
       state.couponModal.isOpen = true;
-      state.couponModal.coupon = action.payload;
+      state.couponModal.campaign = action.payload;
     },
     closeCouponModal: (state) => {
       state.couponModal.isOpen = false;
-      state.couponModal.coupon = undefined;
+      state.couponModal.campaign = undefined;
     },
-    openRedeemModal: (state, action: PayloadAction<Coupon>) => {
+    openRedeemModal: (state, action: PayloadAction<Campaign>) => {
       state.couponModal.isOpen = false;
       state.redeemModal.isOpen = true;
-      state.redeemModal.coupon = action.payload;
+      state.redeemModal.campaign = action.payload;
     },
     closeRedeemModal: (state) => {
       state.redeemModal.isOpen = false;
-      state.redeemModal.coupon = undefined;
+      state.redeemModal.campaign = undefined;
     },
     openAddNewCouponModal: (state) => {
       state.addNewCouponModal.isOpen = true;
