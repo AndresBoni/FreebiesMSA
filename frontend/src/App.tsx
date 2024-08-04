@@ -12,11 +12,10 @@ const App: React.FC = () => {
     <>
       <Navbar />
       <Routes>
-        {/*TODO implement customer/company redirect*/}
         <Route path="/company" element={<CompanyHomePage />} />
         <Route path="/:location?/:district?" element={<CustomerHomePage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signup/:type?" element={<SignUp />} />
       </Routes>
       <Copyright />
     </>

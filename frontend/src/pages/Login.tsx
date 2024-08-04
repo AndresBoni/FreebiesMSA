@@ -1,26 +1,84 @@
-import * as React from "react";
-import { Link as RouterLink } from "react-router-dom";
+import React, { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
+import api from "@/config/axiosConfig";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "@/store/slices/userSlice";
+
+const loginUser = async (email: string, password: string) => {
+  try {
+    const response = await api.post("/api/account/login", { email, password });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      const errorData = error.response.data;
+      if (typeof errorData === "object") {
+        const firstError = Array.isArray(errorData) ? errorData[0] : errorData;
+        if (typeof firstError === "object" && firstError.description) {
+          throw new Error(firstError.description);
+        }
+      }
+      if (error.response.status === 400) {
+        throw new Error("Please verify your details and try again.");
+      }
+      if (error.response.status === 401) {
+        throw new Error("Invalid email or password. Please try again.");
+      } else if (error.response.status === 500) {
+        throw new Error(
+          "An error occurred while logging in. Please try again later.",
+        );
+      }
+    }
+    throw new Error("An unexpected error occurred. Please try again.");
+  }
+};
 
 const Login: React.FC = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    setEmailError(null);
+    setPasswordError(null);
+    setFormError(null);
+
+    try {
+      const { token, role, name } = await loginUser(email, password);
+
+      localStorage.setItem("token", token);
+      dispatch(setToken(token));
+      dispatch(setUser({ name, email, role }));
+
+      navigate(role === "Company" ? "/company" : "/");
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes("Email")) {
+          setEmailError(error.message);
+        } else if (error.message.includes("Password")) {
+          setPasswordError(error.message);
+        } else {
+          setFormError(error.message);
+        }
+      } else {
+        setFormError("An unexpected error occurred. Please try again.");
+      }
+    }
   };
 
   return (
@@ -40,31 +98,39 @@ const Login: React.FC = () => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={!!emailError}
+                helperText={emailError || ""}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={!!passwordError}
+                helperText={passwordError || ""}
+              />
+            </Grid>
+          </Grid>
+          {formError && <Typography color="error">{formError}</Typography>}
           <Button
             type="submit"
             fullWidth
@@ -74,16 +140,9 @@ const Login: React.FC = () => {
             Sign In
           </Button>
           <Grid container>
-            {/* TODO implement forgot password 
-            <Grid item xs>
-              <Link component={RouterLink} to="/forgotpassword" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid> 
-            */}
             <Grid item>
               <Link component={RouterLink} to="/signup" variant="body2">
-                {"Don't have an account? Sign Up"}
+                Don't have an account? Sign Up
               </Link>
             </Grid>
           </Grid>
