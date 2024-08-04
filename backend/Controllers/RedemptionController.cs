@@ -71,6 +71,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("redeemCode/{redemptionCode}")]
+        [Authorize(Policy = "CompanyOnly")]
         public async Task<IActionResult> RedeemRedemption(string redemptionCode)
         {
             try
