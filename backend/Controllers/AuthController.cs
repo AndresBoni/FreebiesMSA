@@ -41,10 +41,11 @@ namespace backend.Controllers
             return Ok(
                 new NewUserDto
                 {
+                    Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
-                    Token = await _tokenService.CreateTokenAsync(user),
-                    Role = role
+                    Role = role,
+                    Token = await _tokenService.CreateTokenAsync(user)
                 }
             );
         }
@@ -79,10 +80,11 @@ namespace backend.Controllers
                     return Ok(
                         new NewUserDto
                         {
+                            Id = appUser.Id,
                             Name = appUser.Name,
                             Email = appUser.Email,
-                            Token = await _tokenService.CreateTokenAsync(appUser),
-                            Role = userRole
+                            Role = userRole,
+                            Token = await _tokenService.CreateTokenAsync(appUser)
                         }
                     );
                 }
@@ -96,5 +98,6 @@ namespace backend.Controllers
                 return StatusCode(500, createdUser.Errors);
             }
         }
+
     }
 }

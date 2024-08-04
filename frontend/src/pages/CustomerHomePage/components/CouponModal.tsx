@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -8,7 +8,8 @@ import CardGiftcardOutlinedIcon from "@mui/icons-material/CardGiftcardOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { closeCouponModal, openRedeemModal } from "@/store/slices/modalSlice";
 import { RootState } from "@/store/store";
-import { Coupon } from "@/types";
+import { Campaign } from "@/types";
+import noCouponImage from "@/assets/nocouponimage.svg";
 
 const style = {
   position: "absolute",
@@ -23,16 +24,23 @@ const style = {
 };
 
 interface Props {
-  coupon: Coupon;
+  campaign: Campaign;
 }
 
-const CouponModal: React.FC<Props> = ({ coupon }) => {
+const CouponModal: React.FC<Props> = ({ campaign }) => {
   const dispatch = useDispatch();
-
   const { couponModal } = useSelector((state: RootState) => state.modals);
   const { isOpen } = couponModal;
 
-  if (!coupon) return null;
+  const [couponImage, setCouponImage] = useState(
+    campaign.coupon.image || noCouponImage,
+  );
+
+  const handleImageError = useCallback(() => {
+    setCouponImage(noCouponImage);
+  }, []);
+
+  if (!campaign) return null;
 
   return (
     <Modal
@@ -49,17 +57,18 @@ const CouponModal: React.FC<Props> = ({ coupon }) => {
           pb={2}
           fontWeight="bold"
         >
-          {coupon.title}
+          {campaign.coupon.title}
         </Typography>
         <CardMedia
           component="img"
           height="194"
-          image={coupon.imageUrl}
-          alt={coupon.title}
+          image={couponImage}
+          onError={handleImageError}
+          alt={campaign.coupon.title}
           style={{ width: "100%", objectFit: "cover", marginBottom: 2 }}
         />
         <Typography id="modal-modal-description" sx={{ mt: 2, mb: 2 }}>
-          {coupon.shortDescription}
+          {campaign.coupon.shortDescription}
         </Typography>
         <Typography
           variant="body2"
@@ -69,13 +78,13 @@ const CouponModal: React.FC<Props> = ({ coupon }) => {
           Conditions
         </Typography>
         <Typography variant="body2" color="textSecondary">
-          {coupon.conditions}
+          {campaign.coupon.conditions}
         </Typography>
         <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-          Location: {coupon.location.state}, {coupon.location.district}
+          Location: {campaign.state}, {campaign.district}
         </Typography>
         <IconButton
-          onClick={() => dispatch(openRedeemModal(coupon))}
+          onClick={() => dispatch(openRedeemModal(campaign))}
           sx={{ mt: 2, p: 1 }}
           color="primary"
         >

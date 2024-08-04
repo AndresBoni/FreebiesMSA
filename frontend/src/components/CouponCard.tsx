@@ -11,13 +11,13 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import GiftIcon from "@mui/icons-material/CardGiftcardOutlined";
-import { Coupon } from "@/types";
+import { Campaign } from "@/types";
 import noCouponImage from "@/assets/nocouponimage.svg";
 
 interface Props {
-  coupon: Coupon;
-  onOpenCouponModal?: (coupon: Coupon) => void;
-  onOpenRedeemModal?: (coupon: Coupon) => void;
+  campaign: Campaign;
+  onOpenCouponModal?: (campaign: Campaign) => void;
+  onOpenRedeemModal?: (campaign: Campaign) => void;
 }
 
 const formatLocation = (state: string, district: string) => {
@@ -28,12 +28,12 @@ const formatLocation = (state: string, district: string) => {
 };
 
 const CouponCard: React.FC<Props> = ({
-  coupon,
+  campaign,
   onOpenCouponModal,
   onOpenRedeemModal,
 }) => {
   const [couponImage, setCouponImage] = useState(
-    coupon.imageUrl || noCouponImage,
+    campaign.coupon.image || noCouponImage,
   );
   const [expanded, setExpanded] = useState(false);
 
@@ -47,25 +47,25 @@ const CouponCard: React.FC<Props> = ({
 
   const handleOpenCouponModal = useCallback(() => {
     if (onOpenCouponModal) {
-      onOpenCouponModal(coupon);
+      onOpenCouponModal(campaign);
     }
-  }, [coupon, onOpenCouponModal]);
+  }, [campaign, onOpenCouponModal]);
 
   const handleOpenRedeemModal = useCallback(() => {
     if (onOpenRedeemModal) {
-      onOpenRedeemModal(coupon);
+      onOpenRedeemModal(campaign);
     }
-  }, [coupon, onOpenRedeemModal]);
+  }, [campaign, onOpenRedeemModal]);
 
   return (
     <Card sx={{ width: "100%", minHeight: 390, cursor: "pointer" }}>
       <CardHeader
         onClick={handleOpenCouponModal}
         titleTypographyProps={{ variant: "h6", fontWeight: "bold" }}
-        title={coupon.title}
+        title={campaign.coupon.title}
         subheader={
           <Typography variant="body2">
-            {formatLocation(coupon.location.state, coupon.location.district)}
+            {formatLocation(campaign.state, campaign.district)}
           </Typography>
         }
       />
@@ -74,13 +74,13 @@ const CouponCard: React.FC<Props> = ({
         height="194"
         image={couponImage}
         onError={handleImageError}
-        alt={coupon.title}
+        alt={campaign.coupon.title}
         onClick={handleOpenCouponModal}
         sx={{ cursor: "pointer" }}
       />
       <CardContent onClick={handleOpenCouponModal} sx={{ cursor: "pointer" }}>
         <Typography variant="body2" color="text.secondary">
-          {coupon.shortDescription}
+          {campaign.coupon.shortDescription}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
@@ -109,7 +109,7 @@ const CouponCard: React.FC<Props> = ({
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>{coupon.conditions}</Typography>
+          <Typography paragraph>{campaign.coupon.conditions}</Typography>
         </CardContent>
       </Collapse>
     </Card>

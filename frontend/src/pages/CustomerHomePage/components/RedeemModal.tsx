@@ -3,7 +3,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import QRCode from "qrcode.react";
-import { Coupon } from "@/types";
+import { Campaign } from "@/types";
 import { closeRedeemModal } from "@/store/slices/modalSlice";
 import { RootState } from "@/store/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,10 +21,10 @@ const style = {
 };
 
 interface Props {
-  coupon: Coupon;
+  campaign: Campaign;
 }
 
-const RedeemModal: React.FC<Props> = ({ coupon }) => {
+const RedeemModal: React.FC<Props> = ({ campaign }) => {
   const [qrCode, setQRCode] = useState<string>("");
   const [expiryTime, setExpiryTime] = useState<Date | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(900);
@@ -34,7 +34,7 @@ const RedeemModal: React.FC<Props> = ({ coupon }) => {
   const { redeemModal } = useSelector((state: RootState) => state.modals);
 
   useEffect(() => {
-    if (redeemModal.isOpen && coupon) {
+    if (redeemModal.isOpen && campaign) {
       //TODO implement real QR code
       const randomQRCode = Math.random().toString(36).substring(7);
       setQRCode(randomQRCode);
@@ -45,7 +45,7 @@ const RedeemModal: React.FC<Props> = ({ coupon }) => {
 
       setTimeLeft(900);
     }
-  }, [redeemModal.isOpen, coupon]);
+  }, [redeemModal.isOpen, campaign]);
 
   useEffect(() => {
     if (!redeemModal.isOpen || !expiryTime) return;
@@ -87,7 +87,7 @@ const RedeemModal: React.FC<Props> = ({ coupon }) => {
           pb={2}
           fontWeight="bold"
         >
-          {coupon.title}
+          {campaign.coupon.title}
         </Typography>
         <Box
           sx={{
@@ -105,7 +105,7 @@ const RedeemModal: React.FC<Props> = ({ coupon }) => {
           Expires in: {formatTime(timeLeft)}
         </Typography>
         <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-          Location: {coupon.location.state}, {coupon.location.district}
+          Location: {campaign.state}, {campaign.district}
         </Typography>
       </Box>
     </Modal>

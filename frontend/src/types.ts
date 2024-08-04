@@ -1,26 +1,28 @@
+export interface Campaign {
+  campaignId: number;
+  userId: string;
+  state: string;
+  district: string;
+  availableDays: DayOfWeek[];
+  startTime: string;
+  endTime: string;
+  isAllDay: boolean;
+  startDate: string;
+  endDate: string;
+  targetCustomer: string;
+  totalCoupons: number;
+  redeemedCoupons: number;
+  inProgressCoupons: number;
+  coupon: Coupon;
+}
+
 export interface Coupon {
-  id: number;
+  couponId: number;
   title: string;
   store: string;
-  imageUrl?: string;
+  image: string;
   shortDescription: string;
-  conditions?: string;
-  location: {
-    state: string;
-    district: string;
-  };
-  status: "active" | "paused";
-  targetCustomer: "new" | "returning" | "all";
-  redeemed: number;
-  available: number;
-  inProgress: number;
-  availableDays?: DayOfWeek[];
-  availableHours?:
-    | {
-        start: Time;
-        end: Time;
-      }
-    | "all-day";
+  conditions: string;
 }
 
 //Valid days of the week
@@ -33,6 +35,3 @@ type DayOfWeek =
   | "Saturday"
   | "Sunday"
   | "all-week";
-
-// Valid time format (HH:MM)
-type Time = `${number}:${number}` | "all-day";

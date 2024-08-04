@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import CouponCard from "../../../components/CouponCard";
+import CouponCard from "@/components/CouponCard";
 import CouponModal from "./CouponModal";
 import RedeemModal from "./RedeemModal";
 import SelectLocation from "@/components/SelectLocation";
-import coupons from "@/data/Coupons";
 import { RootState } from "@/store/store";
 import { openCouponModal, openRedeemModal } from "@/store/slices/modalSlice";
-import { Coupon } from "@/types";
+import { Campaign } from "@/types";
+import api from "@/config/axiosConfig";
 
 const CouponsList: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,27 +22,55 @@ const CouponsList: React.FC = () => {
     district?: string;
   }>();
 
-  const filteredCoupons = coupons.filter((coupon) => {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const response = await api.get("/api/campaign");
+        const campaigns = await response.data;
+
+        setCampaigns(campaigns);
+      } catch (error) {
+        console.error("Error fetching coupons:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCoupons();
+  }, []);
+
+  const filteredCampaigns = campaigns.filter((campaign) => {
     let match = true;
 
-    if (location && location !== "All-locations") {
-      match = coupon.location.state === location;
+    if (location && location !== "All-New-Zealand") {
+      match = campaign.state === location;
     }
 
     if (match && district && district !== "All-districts") {
-      match = coupon.location.district === district;
+      match = campaign.district === district;
     }
 
     return match;
   });
 
-  const handleOpenCouponModal = (coupon: Coupon) => {
-    dispatch(openCouponModal(coupon));
+  const handleOpenCouponModal = (campaign: Campaign) => {
+    dispatch(openCouponModal(campaign));
   };
 
-  const handleOpenRedeemModal = (coupon: Coupon) => {
-    dispatch(openRedeemModal(coupon));
+  const handleOpenRedeemModal = (campaign: Campaign) => {
+    dispatch(openRedeemModal(campaign));
   };
+
+  if (loading) {
+    return (
+      <Typography component="p" variant="h6" my={8} mx={6}>
+        Loading...
+      </Typography>
+    );
+  }
 
   return (
     <>
@@ -51,11 +79,11 @@ const CouponsList: React.FC = () => {
         sx={{ display: "flex", flexDirection: "column", gap: "1rem", mt: 2 }}
       >
         <Grid container spacing={2}>
-          {filteredCoupons.length > 0 ? (
-            filteredCoupons.map((coupon) => (
-              <Grid item key={coupon.id} xs={12} sm={6} md={4}>
+          {filteredCampaigns.length > 0 ? (
+            filteredCampaigns.map((campaign) => (
+              <Grid item key={campaign.campaignId} xs={12} sm={6} md={4}>
                 <CouponCard
-                  coupon={coupon}
+                  campaign={campaign}
                   onOpenCouponModal={handleOpenCouponModal}
                   onOpenRedeemModal={handleOpenRedeemModal}
                 />
@@ -69,11 +97,11 @@ const CouponsList: React.FC = () => {
           )}
         </Grid>
       </Grid>
-      {couponModal.isOpen && couponModal.coupon && (
-        <CouponModal coupon={couponModal.coupon} />
+      {couponModal.isOpen && couponModal.campaign && (
+        <CouponModal campaign={couponModal.campaign} />
       )}
-      {redeemModal.isOpen && redeemModal.coupon && (
-        <RedeemModal coupon={redeemModal.coupon} />
+      {redeemModal.isOpen && redeemModal.campaign && (
+        <RedeemModal campaign={redeemModal.campaign} />
       )}
     </>
   );

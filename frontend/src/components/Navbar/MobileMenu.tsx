@@ -1,66 +1,65 @@
-import React from 'react';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import React from "react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import { Link } from "react-router-dom";
 
 interface MobileMenuProps {
   anchorEl: null | HTMLElement;
   isMobileMenuOpen: boolean;
   handleMobileMenuClose: () => void;
   handleProfileMenuOpen: (event: React.MouseEvent<HTMLElement>) => void;
+  logged: boolean;
 }
 
-const MobileMenu: React.FC<MobileMenuProps> = ({ anchorEl, isMobileMenuOpen, handleMobileMenuClose, handleProfileMenuOpen }) => (
+const MobileMenu: React.FC<MobileMenuProps> = ({
+  anchorEl,
+  isMobileMenuOpen,
+  handleMobileMenuClose,
+  handleProfileMenuOpen,
+  logged,
+}) => (
   <Menu
     anchorEl={anchorEl}
     anchorOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
+      vertical: "top",
+      horizontal: "right",
     }}
     keepMounted
     transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
+      vertical: "top",
+      horizontal: "right",
     }}
     open={isMobileMenuOpen}
     onClose={handleMobileMenuClose}
   >
-    <MenuItem>
-      <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-        <Badge badgeContent={4} color="error">
-          <MailIcon />
-        </Badge>
-      </IconButton>
-      <p>Messages</p>
-    </MenuItem>
-    <MenuItem>
-      <IconButton
-        size="large"
-        aria-label="show 17 new notifications"
-        color="inherit"
-      >
-        <Badge badgeContent={17} color="error">
-          <NotificationsIcon />
-        </Badge>
-      </IconButton>
-      <p>Notifications</p>
-    </MenuItem>
-    <MenuItem onClick={handleProfileMenuOpen}>
-      <IconButton
-        size="large"
-        aria-label="account of current user"
-        aria-controls="primary-search-account-menu"
-        aria-haspopup="true"
-        color="inherit"
-      >
-        <AccountCircle />
-      </IconButton>
-      <p>Profile</p>
-    </MenuItem>
+    {logged ? (
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton
+          size="large"
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem>
+    ) : (
+      [
+        <MenuItem key="login" component={Link} to="/login">
+          Login
+        </MenuItem>,
+        <MenuItem key="signup" component={Link} to="/signup">
+          Sign Up
+        </MenuItem>,
+        <MenuItem key="register-store" component={Link} to="/signup/store">
+          Register Store
+        </MenuItem>,
+      ]
+    )}
   </Menu>
 );
 
