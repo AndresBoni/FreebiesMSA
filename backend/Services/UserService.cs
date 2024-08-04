@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Threading.Tasks;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.AspNetCore.Identity;

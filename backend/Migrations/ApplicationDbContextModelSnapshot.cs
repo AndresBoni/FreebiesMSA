@@ -336,6 +336,9 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RedemptionId"));
 
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CouponId")
                         .HasColumnType("int");
 
@@ -345,7 +348,7 @@ namespace backend.Migrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("RedeemedAt")
+                    b.Property<DateTime?>("RedeemedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RedemptionCode")

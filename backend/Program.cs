@@ -1,5 +1,6 @@
 using backend.Interfaces;
 using backend.Models;
+using backend.Repositories;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -65,9 +66,10 @@ builder.Services.AddAuthentication(options =>
 
 // Add application services
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
 builder.Services.AddScoped<RoleInitializer>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
+builder.Services.AddScoped<IRedemptionRepository, RedemptionRepository>();
 
 // Add authorization services
 builder.Services.AddAuthorization(options =>
@@ -111,6 +113,9 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
+// Add the RedemptionCleanupService
+builder.Services.AddHostedService<RedemptionCleanupService>();
 
 var app = builder.Build();
 

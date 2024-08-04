@@ -222,10 +222,11 @@ namespace backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CouponId = table.Column<int>(type: "int", nullable: false),
+                    CampaignId = table.Column<int>(type: "int", nullable: false),
                     RedemptionCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RedeemedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RedeemedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Validated = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>

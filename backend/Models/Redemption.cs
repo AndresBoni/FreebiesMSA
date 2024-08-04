@@ -16,11 +16,11 @@ namespace backend.Models
         [Required]
         public int CouponId { get; set; }
         public Coupon Coupon { get; set; }
-
+        public int CampaignId { get; set; }
         public string RedemptionCode { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpirationDate { get; set; }
-        public DateTime RedeemedAt { get; set; }
+        public DateTime? RedeemedAt { get; set; }
         public bool Validated { get; set; }
     }
 }

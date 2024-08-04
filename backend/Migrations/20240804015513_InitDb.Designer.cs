@@ -12,7 +12,7 @@ using backend.Models;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240803094957_InitDb")]
+    [Migration("20240804015513_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -339,6 +339,9 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RedemptionId"));
 
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CouponId")
                         .HasColumnType("int");
 
@@ -348,7 +351,7 @@ namespace backend.Migrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("RedeemedAt")
+                    b.Property<DateTime?>("RedeemedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RedemptionCode")
